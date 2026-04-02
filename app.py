@@ -16,10 +16,10 @@ st.set_page_config(
     page_title="🌱 AI Gardening Game",
     page_icon="🌱",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="expanded"
 )
 
-# ========== SIMPLE CLEAN CSS ==========
+# ========== COMPLETE FIXED CSS ==========
 st.markdown("""
 <style>
     /* Main container */
@@ -51,47 +51,88 @@ st.markdown("""
     
     /* Plant card */
     .plant-card {
-        background: #f8f9fa;
-        border-radius: 15px;
-        padding: 15px;
+        background: white;
+        border-radius: 20px;
+        padding: 20px;
         text-align: center;
         cursor: pointer;
         transition: all 0.3s;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        margin: 5px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        border: 2px solid #e0e0e0;
     }
     
     .plant-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        border-color: #4CAF50;
     }
     
     .plant-card.selected {
         border: 3px solid #ffd700;
-        background: #fff9e6;
+        background: #fffef5;
     }
     
-    /* Action panel */
-    .action-panel {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        padding: 25px;
-        border-radius: 20px;
-        text-align: center;
-        margin: 20px 0;
-        color: white;
+    .plant-emoji {
+        font-size: 56px;
+        margin-bottom: 10px;
     }
     
-    /* Buttons */
-    .stButton > button {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
+    .plant-name {
+        font-size: 16px;
         font-weight: bold;
-        border-radius: 10px;
-        transition: all 0.3s;
+        color: #2c3e50;
+        margin-bottom: 10px;
     }
     
-    .stButton > button:hover {
-        transform: scale(1.02);
+    /* Health bar */
+    .health-bar-container {
+        background: #e0e0e0;
+        border-radius: 10px;
+        height: 10px;
+        margin: 10px 0;
+        overflow: hidden;
+    }
+    
+    .health-bar {
+        height: 100%;
+        border-radius: 10px;
+        transition: width 0.3s;
+    }
+    
+    /* Stats row */
+    .stats-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        margin: 10px 0;
+        padding: 5px;
+        background: #f0f2f5;
+        border-radius: 10px;
+    }
+    
+    .stat-item {
+        flex: 1;
+        text-align: center;
+        font-size: 13px;
+        font-weight: bold;
+        color: #2c3e50 !important;
+        background: white;
+        padding: 4px 6px;
+        border-radius: 8px;
+    }
+    
+    /* Action popup */
+    .action-popup {
+        margin-top: 15px;
+        padding: 15px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 15px;
+        animation: fadeIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
     }
     
     /* Combo card */
@@ -105,7 +146,7 @@ st.markdown("""
         font-weight: bold;
     }
     
-    /* Timer */
+    /* Timer card */
     .timer-card {
         background: #e74c3c;
         padding: 12px;
@@ -121,25 +162,6 @@ st.markdown("""
     .alert-danger { background: #f8d7da; color: #721c24; padding: 10px; border-radius: 10px; margin: 10px 0; border-left: 4px solid #dc3545; }
     .alert-info { background: #d1ecf1; color: #0c5460; padding: 10px; border-radius: 10px; margin: 10px 0; border-left: 4px solid #17a2b8; }
     
-    /* Mission card */
-    .mission-card {
-        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-        padding: 10px;
-        border-radius: 10px;
-        margin: 5px 0;
-        color: white;
-    }
-    
-    /* Shop card */
-    .shop-card {
-        background: #f8f9fa;
-        padding: 15px;
-        border-radius: 12px;
-        text-align: center;
-        margin: 10px 0;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    
     /* Level badge */
     .level-badge {
         background: #f1c40f;
@@ -151,27 +173,72 @@ st.markdown("""
         display: inline-block;
     }
     
-    /* Health bar */
-    .health-bar-container {
-        background: #e0e0e0;
-        border-radius: 10px;
-        height: 8px;
+    /* ========== SIDEBAR STYLES - ALL TEXT VISIBLE ========== */
+    /* Make all sidebar text dark and visible */
+    .stSidebar {
+        background-color: #f0f2f5;
+    }
+    
+    .stSidebar .stMarkdown, 
+    .stSidebar p, 
+    .stSidebar div, 
+    .stSidebar span,
+    .stSidebar label {
+        color: #1a1a2e !important;
+        font-size: 14px;
+    }
+    
+    /* Sidebar Stats Box */
+    .sidebar-stats {
+        background: white;
+        padding: 15px;
+        border-radius: 12px;
         margin: 10px 0;
-        overflow: hidden;
+        border: 1px solid #d0d0d0;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
     
-    .health-bar {
-        height: 100%;
-        border-radius: 10px;
-        transition: width 0.3s;
+    .sidebar-stats p {
+        color: #1a1a2e !important;
+        font-size: 14px;
+        font-weight: 600;
+        margin: 10px 0;
     }
     
-    /* Stats row */
-    .stats-row {
-        display: flex;
-        justify-content: space-between;
-        font-size: 12px;
-        margin: 8px 0;
+    .sidebar-stats strong {
+        color: #1a1a2e !important;
+    }
+    
+    /* Instructions Box */
+    .instructions-box {
+        background: white;
+        padding: 20px;
+        border-radius: 15px;
+        margin: 20px 0;
+        border-left: 5px solid #4CAF50;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .instructions-title {
+        font-size: 20px;
+        font-weight: bold;
+        color: #1a1a2e !important;
+        margin-bottom: 15px;
+    }
+    
+    /* Make all markdown text in sidebar visible */
+    .stSidebar .stMarkdown p {
+        color: #1a1a2e !important;
+    }
+    
+    /* Expander text */
+    .stSidebar .streamlit-expanderHeader {
+        color: #1a1a2e !important;
+    }
+    
+    /* Button text */
+    .stSidebar button {
+        color: white !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -183,19 +250,32 @@ def hash_password(password):
 def load_user_data(username):
     try:
         os.makedirs("users", exist_ok=True)
-        with open(f"users/{username}.json", 'r') as f:
-            return json.load(f)
-    except:
+        file_path = f"users/{username}.json"
+        if os.path.exists(file_path):
+            with open(file_path, 'r') as f:
+                return json.load(f)
+        return None
+    except Exception as e:
+        print(f"Error loading user data: {e}")
         return None
 
 def save_user_data(username, data):
-    os.makedirs("users", exist_ok=True)
-    with open(f"users/{username}.json", 'w') as f:
-        json.dump(data, f, indent=2)
+    try:
+        os.makedirs("users", exist_ok=True)
+        with open(f"users/{username}.json", 'w') as f:
+            json.dump(data, f, indent=2)
+        return True
+    except Exception as e:
+        print(f"Error saving user data: {e}")
+        return False
 
 def register_user(username, password):
-    if load_user_data(username):
-        return False, "Username already exists!"
+    if not username or not password:
+        return False, "Username and password cannot be empty!"
+    
+    existing_data = load_user_data(username)
+    if existing_data:
+        return False, "Username already exists! Please choose another."
     
     user_data = {
         "username": username,
@@ -208,15 +288,22 @@ def register_user(username, password):
         "stats": {"games_played": 0, "best_score": 0, "total_score": 0, "perfect_moves": 0},
         "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     }
-    save_user_data(username, user_data)
-    return True, "User created successfully!"
+    
+    if save_user_data(username, user_data):
+        return True, user_data
+    return False, "Error creating user. Please try again."
 
 def login_user(username, password):
+    if not username or not password:
+        return False, "Please enter username and password!"
+    
     user_data = load_user_data(username)
     if not user_data:
-        return False, "User not found!"
+        return False, "User not found! Please register first."
+    
     if user_data["password"] != hash_password(password):
-        return False, "Wrong password!"
+        return False, "Wrong password! Please try again."
+    
     return True, user_data
 
 # ========== LOAD MODEL ==========
@@ -277,9 +364,9 @@ def get_smart_hint(plant, combo):
 
 def random_event(env):
     events = [
-        {"name": "🌧️ RAIN!", "effect": "water", "value": 0.8, "message": "Rain watered all plants!"},
-        {"name": "☀️ HEATWAVE!", "effect": "water", "value": -0.5, "message": "Heatwave! Water decreased!"},
-        {"name": "🦋 BENEFICIAL INSECTS!", "effect": "soil", "value": 0.5, "message": "Insects improved soil!"},
+        {"name": "🌧️ RAIN!", "effect": "water", "value": 0.8, "message": "Rain watered all plants! +0.8 water"},
+        {"name": "☀️ HEATWAVE!", "effect": "water", "value": -0.5, "message": "Heatwave! Water decreased by 0.5"},
+        {"name": "🦋 BENEFICIAL INSECTS!", "effect": "soil", "value": 0.5, "message": "Insects improved soil! +0.5 soil"},
     ]
     
     if random.random() < 0.12:
@@ -298,6 +385,7 @@ def ai_trash_talk():
         "🤖 My algorithms are superior!",
         "🤖 Is that all you've got?",
         "🤖 Your plants are suffering!",
+        "🤖 Humans are obsolete!",
     ]
     return random.choice(messages)
 
@@ -307,23 +395,71 @@ def display_plant_card(plant, idx, is_selected):
     health_percent = plant.health / 100
     selected_class = "plant-card selected" if is_selected else "plant-card"
     
+    if plant.health > 70:
+        health_text_color = "#2ecc71"
+    elif plant.health > 40:
+        health_text_color = "#f1c40f"
+    else:
+        health_text_color = "#e74c3c"
+    
     return f"""
     <div class="{selected_class}">
-        <div style="font-size: 48px;">{emoji}</div>
-        <div style="font-weight: bold;">Plant {idx + 1}</div>
+        <div class="plant-emoji">{emoji}</div>
+        <div class="plant-name">🌿 Plant {idx + 1}</div>
         <div class="health-bar-container">
             <div class="health-bar" style="width: {health_percent * 100}%; background: {health_color};"></div>
         </div>
         <div class="stats-row">
-            <span>❤️ {plant.health:.0f}%</span>
-            <span>📈 {plant.growth_stage:.1f}</span>
+            <div class="stat-item">❤️ <span style="color: {health_text_color}; font-weight: bold;">{plant.health:.0f}%</span></div>
+            <div class="stat-item">📈 <span style="color: #2c3e50; font-weight: bold;">{plant.growth_stage:.1f}</span></div>
         </div>
         <div class="stats-row">
-            <span>💧 {plant.water:.1f}</span>
-            <span>🌍 {plant.soil:.1f}</span>
+            <div class="stat-item">💧 <span style="color: #2980b9; font-weight: bold;">{plant.water:.1f}</span></div>
+            <div class="stat-item">🌍 <span style="color: #8e44ad; font-weight: bold;">{plant.soil:.1f}</span></div>
         </div>
     </div>
     """
+
+def show_instructions():
+    st.markdown("""
+    <div class="instructions-box">
+        <div class="instructions-title">🌱 HOW TO PLAY & WIN</div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    **🎯 YOUR GOAL:** Keep plants healthy and score 80+ points before 100 days!
+    
+    ---
+    
+    **🌿 PLANT STATS:**
+    - ❤️ HEALTH (0-100%): Below 40% = dying, Above 70% = healthy
+    - 📈 GROWTH (0-3): Higher = more points, 3 = fully grown
+    - 💧 WATER (0-5): Below 2.5 = thirsty, Above 4.5 = overwatered
+    - 🌍 SOIL (0-5): Below 2.5 = needs fertilizer, Above 4.5 = too much
+    
+    **🎮 ACTIONS:**
+    - 💧 WATER - Best when water is below 2.5
+    - 🌿 FERTILIZE - Best when soil is below 2.5
+    - ✂️ PRUNE - Best when health is below 60%
+    - ⏰ WAIT - Best when all stats are balanced (3-4 range)
+    
+    **🔥 COMBO SYSTEM:**
+    - Perfect moves (needed action) increase your combo
+    - Bad moves reset combo to 0
+    - Higher combo = more points per action!
+    
+    **🏆 HOW TO WIN:**
+    - Keep all plants above 70% health
+    - Help plants reach growth stage 3 (maturity)
+    - Build high combos with perfect moves
+    - Score 80+ points before 100 days
+    
+    **🤖 CHALLENGE AI MODE:**
+    - Click "Run AI" to see your trained model play
+    - AI averages 75-78 points
+    - Try to beat the AI's score!
+    """)
 
 def main():
     st.markdown('<div class="main-container">', unsafe_allow_html=True)
@@ -346,7 +482,8 @@ def main():
         with tab1:
             username = st.text_input("Username", key="login_user")
             password = st.text_input("Password", type="password", key="login_pass")
-            if st.button("Login", use_container_width=True):
+            
+            if st.button("Login", key="login_btn", use_container_width=True):
                 success, result = login_user(username, password)
                 if success:
                     st.session_state.logged_in = True
@@ -364,12 +501,28 @@ def main():
         with tab2:
             new_username = st.text_input("Choose Username", key="reg_user")
             new_password = st.text_input("Choose Password", type="password", key="reg_pass")
-            if st.button("Register", use_container_width=True):
-                success, message = register_user(new_username, new_password)
-                if success:
-                    st.success(message)
+            confirm_password = st.text_input("Confirm Password", type="password", key="reg_confirm")
+            
+            if st.button("Register", key="register_btn", use_container_width=True):
+                if not new_username or not new_password:
+                    st.error("Please fill all fields!")
+                elif new_password != confirm_password:
+                    st.error("Passwords do not match!")
                 else:
-                    st.error(message)
+                    success, result = register_user(new_username, new_password)
+                    if success:
+                        st.session_state.logged_in = True
+                        st.session_state.username = new_username
+                        st.session_state.coins = result["coins"]
+                        st.session_state.level = result["level"]
+                        st.session_state.exp = result["exp"]
+                        st.session_state.achievements = result["achievements"]
+                        st.session_state.inventory = result["inventory"]
+                        st.session_state.stats = result["stats"]
+                        st.success("Registration successful! Welcome to the game!")
+                        st.rerun()
+                    else:
+                        st.error(result)
         
         st.stop()
     
@@ -379,34 +532,48 @@ def main():
     # ========== INITIALIZE GAME ==========
     if 'game_active' not in st.session_state:
         st.session_state.game_active = False
-        st.session_state.show_action_panel = False
     
-    # ========== SIDEBAR - PLAYER INFO ==========
+    # ========== SIDEBAR ==========
     with st.sidebar:
         st.markdown(f"""
         <div style="text-align: center; margin-bottom: 20px;">
             <div style="font-size: 48px;">👤</div>
-            <div style="font-size: 20px; font-weight: bold;">{st.session_state.username}</div>
+            <div style="font-size: 20px; font-weight: bold; color: #1a1a2e;">{st.session_state.username}</div>
             <div><span class="level-badge">Level {st.session_state.level}</span></div>
         </div>
         """, unsafe_allow_html=True)
         
         st.markdown(f"""
         <div style="background: linear-gradient(135deg, #f1c40f 0%, #e67e22 100%); padding: 15px; border-radius: 15px; text-align: center; margin-bottom: 20px;">
-            <div style="font-size: 24px;">💰 {st.session_state.coins}</div>
-            <div>Coins</div>
+            <div style="font-size: 24px; font-weight: bold;">💰 {st.session_state.coins}</div>
+            <div style="font-size: 12px;">Coins</div>
         </div>
         """, unsafe_allow_html=True)
         
         st.markdown("---")
         
-        # Stats
-        st.subheader("📊 Stats")
+        st.markdown("#### 📊 Game Stats")
         st.markdown(f"""
-        - 🎮 Games: {st.session_state.stats['games_played']}
-        - 🏆 Best Score: {st.session_state.stats['best_score']}
-        - ⭐ Perfect Moves: {st.session_state.stats['perfect_moves']}
-        """)
+        <div class="sidebar-stats">
+            <p>🎮 <strong>Games Played:</strong> {st.session_state.stats['games_played']}</p>
+            <p>🏆 <strong>Best Score:</strong> {st.session_state.stats['best_score']}</p>
+            <p>⭐ <strong>Perfect Moves:</strong> {st.session_state.stats['perfect_moves']}</p>
+            <p>💰 <strong>Total Coins:</strong> {st.session_state.coins}</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("---")
+        
+        st.markdown("#### 💡 Quick Tips")
+        st.markdown("""
+        <div style="background: white; padding: 12px; border-radius: 10px; margin: 10px 0;">
+            <p style="color: #1a1a2e; margin: 5px 0;">💧 Water when 💧 &lt; 2.5</p>
+            <p style="color: #1a1a2e; margin: 5px 0;">🌿 Fertilize when 🌍 &lt; 2.5</p>
+            <p style="color: #1a1a2e; margin: 5px 0;">✂️ Prune when ❤️ &lt; 60%</p>
+            <p style="color: #1a1a2e; margin: 5px 0;">⏰ Wait when stats are 3-4</p>
+            <p style="color: #1a1a2e; margin: 5px 0;">🔥 Perfect moves = Combo!</p>
+        </div>
+        """, unsafe_allow_html=True)
         
         st.markdown("---")
         
@@ -424,11 +591,14 @@ def main():
         </div>
         """, unsafe_allow_html=True)
         
+        show_instructions()
+        
         col1, col2 = st.columns(2)
         
         with col1:
             if st.button("🌱 PLAY GAME", use_container_width=True):
                 st.session_state.game_active = True
+                st.session_state.game_mode = "normal"
                 st.session_state.human_env = GardenEnvNormalized(grid_size=3)
                 st.session_state.human_score = 0
                 st.session_state.human_steps = 0
@@ -436,13 +606,13 @@ def main():
                 st.session_state.combo = 0
                 st.session_state.perfect_moves = 0
                 st.session_state.score_history = []
-                st.session_state.selected_plant = 0
+                st.session_state.selected_plant = None
                 st.rerun()
         
         with col2:
             if st.button("🤖 CHALLENGE AI", use_container_width=True):
-                st.session_state.game_mode = "vs_ai"
                 st.session_state.game_active = True
+                st.session_state.game_mode = "vs_ai"
                 st.session_state.human_env = GardenEnvNormalized(grid_size=3)
                 st.session_state.human_score = 0
                 st.session_state.human_steps = 0
@@ -452,7 +622,7 @@ def main():
                 st.session_state.score_history = []
                 st.session_state.ai_score = None
                 st.session_state.ai_message = None
-                st.session_state.selected_plant = 0
+                st.session_state.selected_plant = None
                 st.rerun()
         
         st.stop()
@@ -467,10 +637,11 @@ def main():
         st.info(f"✨ {event_msg}")
     
     # Header
+    mode_title = "CHALLENGE AI" if st.session_state.game_mode == "vs_ai" else "PLAY MODE"
     st.markdown(f"""
     <div class="game-header">
-        <div style="font-size: 24px;">{'CHALLENGE AI' if st.session_state.get('game_mode') == 'vs_ai' else 'PLAY MODE'}</div>
-        <div>🏆 Score: {st.session_state.human_score:.0f} | 🔥 Combo: x{st.session_state.combo} | 📅 Day: {st.session_state.human_steps}/100</div>
+        <div style="font-size: 24px;">{mode_title}</div>
+        <div>🏆 Score: <span style="font-size: 20px; font-weight: bold;">{st.session_state.human_score:.0f}</span> | 🔥 Combo: x{st.session_state.combo} | 📅 Day: {st.session_state.human_steps}/100</div>
     </div>
     """, unsafe_allow_html=True)
     
@@ -498,7 +669,7 @@ def main():
         """, unsafe_allow_html=True)
     
     # ========== VS AI MODE ==========
-    if st.session_state.get('game_mode') == 'vs_ai':
+    if st.session_state.game_mode == "vs_ai":
         col_left, col_mid, col_right = st.columns([1, 0.2, 1])
         
         with col_left:
@@ -540,92 +711,93 @@ def main():
     
     # ========== GARDEN DISPLAY ==========
     st.markdown("### 🌿 Your Garden")
-    st.caption("💡 Click on any plant to take action")
+    st.caption("💡 Click on any plant to reveal action buttons right below it")
     
     plants = env.plants
     cols = st.columns(3)
     
+    def take_action(action_type):
+        action_val = st.session_state.selected_plant * 4 + action_type
+        _, reward, done, truncated, _ = env.step(action_val)
+        st.session_state.human_score += reward
+        st.session_state.human_steps += 1
+        st.session_state.score_history.append(st.session_state.human_score)
+        
+        action_names = ["Watered", "Fertilized", "Pruned", "Waited"]
+        
+        if reward > 0.2:
+            st.session_state.combo += 1
+            st.session_state.perfect_moves += 1
+            st.toast(f"✅ PERFECT! {action_names[action_type]} +{reward:.1f} | Combo x{st.session_state.combo}", icon="✨")
+        else:
+            st.session_state.combo = 0
+            st.toast(f"⚠️ {action_names[action_type]} {reward:.1f} points | Combo broken!", icon="💔")
+        
+        if done or truncated:
+            st.session_state.human_game_over = True
+            st.session_state.stats['games_played'] += 1
+            if st.session_state.human_score > st.session_state.stats['best_score']:
+                st.session_state.stats['best_score'] = st.session_state.human_score
+            st.session_state.stats['perfect_moves'] += st.session_state.perfect_moves
+            st.session_state.coins += int(st.session_state.human_score / 5)
+            save_user_data(st.session_state.username, {
+                "username": st.session_state.username,
+                "coins": st.session_state.coins,
+                "level": st.session_state.level,
+                "exp": st.session_state.exp,
+                "achievements": st.session_state.achievements,
+                "inventory": st.session_state.inventory,
+                "stats": st.session_state.stats
+            })
+            st.balloons()
+        
+        st.session_state.selected_plant = None
+        st.rerun()
+    
+    # Display plants
     for idx, plant in enumerate(plants):
-        with cols[idx % 3]:
-            is_selected = (idx == st.session_state.get('selected_plant', -1))
+        col = cols[idx % 3]
+        with col:
+            is_selected = (idx == st.session_state.get('selected_plant'))
             plant_html = display_plant_card(plant, idx, is_selected)
             st.markdown(plant_html, unsafe_allow_html=True)
             
-            if st.button(f"Select Plant {idx+1}", key=f"select_{idx}", use_container_width=True):
-                st.session_state.selected_plant = idx
-                st.session_state.show_action_panel = True
+            if st.button(f"🌿 Select Plant {idx+1}", key=f"select_{idx}", use_container_width=True):
+                if st.session_state.get('selected_plant') == idx:
+                    st.session_state.selected_plant = None
+                else:
+                    st.session_state.selected_plant = idx
                 st.rerun()
-    
-    # ========== ACTION PANEL ==========
-    if st.session_state.show_action_panel and st.session_state.selected_plant is not None:
-        plant = env.plants[st.session_state.selected_plant]
-        hint = get_smart_hint(plant, st.session_state.combo)
-        
-        st.markdown(f"""
-        <div class="action-panel">
-            <div style="font-size: 48px;">{get_plant_emoji(plant)}</div>
-            <div style="font-size: 20px; font-weight: bold;">Plant {st.session_state.selected_plant + 1}</div>
-            <div>❤️ {plant.health:.0f}% | 📈 {plant.growth_stage:.1f} | 💧 {plant.water:.1f} | 🌍 {plant.soil:.1f}</div>
-            <div style="margin: 15px 0; font-size: 14px;">{hint}</div>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        col1, col2, col3, col4 = st.columns(4)
-        
-        def take_action(action_type):
-            action_val = st.session_state.selected_plant * 4 + action_type
-            _, reward, done, truncated, _ = env.step(action_val)
-            st.session_state.human_score += reward
-            st.session_state.human_steps += 1
-            st.session_state.score_history.append(st.session_state.human_score)
             
-            action_names = ["Watered", "Fertilized", "Pruned", "Waited"]
-            
-            if reward > 0.2:
-                st.session_state.combo += 1
-                st.session_state.perfect_moves += 1
-                st.toast(f"✅ PERFECT! {action_names[action_type]} +{reward:.1f} | Combo x{st.session_state.combo}", icon="✨")
-            else:
-                st.session_state.combo = 0
-                st.toast(f"⚠️ {action_names[action_type]} {reward:.1f} points | Combo broken!", icon="💔")
-            
-            if done or truncated:
-                st.session_state.human_game_over = True
-                st.session_state.stats['games_played'] += 1
-                if st.session_state.human_score > st.session_state.stats['best_score']:
-                    st.session_state.stats['best_score'] = st.session_state.human_score
-                st.session_state.stats['perfect_moves'] += st.session_state.perfect_moves
-                st.session_state.coins += int(st.session_state.human_score / 5)
-                save_user_data(st.session_state.username, {
-                    "username": st.session_state.username,
-                    "coins": st.session_state.coins,
-                    "level": st.session_state.level,
-                    "exp": st.session_state.exp,
-                    "achievements": st.session_state.achievements,
-                    "inventory": st.session_state.inventory,
-                    "stats": st.session_state.stats
-                })
-                st.balloons()
-            
-            st.session_state.show_action_panel = False
-            st.rerun()
-        
-        with col1:
-            if st.button("💧 WATER", use_container_width=True):
-                take_action(0)
-        with col2:
-            if st.button("🌿 FERTILIZE", use_container_width=True):
-                take_action(1)
-        with col3:
-            if st.button("✂️ PRUNE", use_container_width=True):
-                take_action(2)
-        with col4:
-            if st.button("⏰ WAIT", use_container_width=True):
-                take_action(3)
-        
-        if st.button("❌ Close", use_container_width=True):
-            st.session_state.show_action_panel = False
-            st.rerun()
+            if st.session_state.get('selected_plant') == idx:
+                st.markdown(f"""
+                <div class="action-popup">
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                        <div style="font-size: 48px;">{get_plant_emoji(plant)}</div>
+                        <div>
+                            <div style="font-size: 18px; font-weight: bold; color: white;">Plant {idx + 1}</div>
+                            <div style="font-size: 12px; color: rgba(255,255,255,0.9);">❤️ {plant.health:.0f}% | 📈 {plant.growth_stage:.1f} | 💧 {plant.water:.1f} | 🌍 {plant.soil:.1f}</div>
+                        </div>
+                    </div>
+                    <div style="font-size: 13px; color: rgba(255,255,255,0.95); margin-bottom: 15px; padding: 8px; background: rgba(0,0,0,0.2); border-radius: 10px;">
+                        💡 {get_smart_hint(plant, st.session_state.combo)}
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+                
+                col_a, col_b, col_c, col_d = st.columns(4)
+                with col_a:
+                    if st.button("💧 WATER", key=f"water_{idx}", use_container_width=True):
+                        take_action(0)
+                with col_b:
+                    if st.button("🌿 FERTILIZE", key=f"fert_{idx}", use_container_width=True):
+                        take_action(1)
+                with col_c:
+                    if st.button("✂️ PRUNE", key=f"prune_{idx}", use_container_width=True):
+                        take_action(2)
+                with col_d:
+                    if st.button("⏰ WAIT", key=f"wait_{idx}", use_container_width=True):
+                        take_action(3)
     
     # ========== SCORE HISTORY ==========
     if len(st.session_state.score_history) > 1:
@@ -651,14 +823,28 @@ def main():
     # ========== GAME OVER ==========
     if st.session_state.get('human_game_over', False):
         st.markdown("---")
+        
+        if st.session_state.human_score >= 80:
+            rating = "🏆 EXCELLENT! Master Gardener!"
+            rating_color = "#2ecc71"
+        elif st.session_state.human_score >= 60:
+            rating = "🌿 GOOD! Keep practicing!"
+            rating_color = "#f1c40f"
+        else:
+            rating = "🌱 KEEP LEARNING! Try again!"
+            rating_color = "#e74c3c"
+        
         st.markdown(f"""
         <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px; border-radius: 20px; text-align: center; color: white;">
             <div style="font-size: 64px;">🎉</div>
             <div style="font-size: 32px; font-weight: bold;">GAME COMPLETE!</div>
             <div style="font-size: 48px; font-weight: bold;">{st.session_state.human_score:.0f}</div>
-            <div>🔥 Best Combo: x{st.session_state.combo}</div>
-            <div>⭐ Perfect Moves: {st.session_state.perfect_moves}</div>
-            <div>💰 Coins Earned: {int(st.session_state.human_score / 5)}</div>
+            <div style="font-size: 20px; margin-top: 10px; color: {rating_color};">{rating}</div>
+            <div style="margin-top: 20px;">
+                <div>🔥 Best Combo: x{st.session_state.combo}</div>
+                <div>⭐ Perfect Moves: {st.session_state.perfect_moves}</div>
+                <div>💰 Coins Earned: {int(st.session_state.human_score / 5)}</div>
+            </div>
         </div>
         """, unsafe_allow_html=True)
         
